@@ -1,0 +1,18 @@
+Read_bin_00
+- Lee archivos .bin
+- Toma los datos crudos del BNO y los convierte a unidades
+- Revisa perdidas de paquetes
+
+Receptor_Bluethooth_v00
+- Se conecta a varios periféricos BLE
+  - Conexión basado en la lista de nombres|direcciones (MODIFICAR linea 116-117)
+  - Solo se suscribe a una característica
+- configurable para:
+  - guardar datos recibidos (en archivos .bin)
+  - imprimir datos recibidos
+  - enviar datos recibidos al localhost
+
+Receptor_Bluethooth_v01
+Version mejorada de Receptor_Bluethooth_v00
+- Acepta la suscripción de 2 características (notificacion&indicacion)
+Nota: SE CONECTA A LOS DISPOSITIVOS SOLO SI SE USAN SUS DIRECCIONES

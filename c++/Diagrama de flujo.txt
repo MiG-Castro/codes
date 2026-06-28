@@ -1,0 +1,55 @@
+g++ imu_receiver_v5_0.cpp -o imu_receiver.exe -lws2_32 -O2
+.\imu_receiver.exe
+
+uint8_t p = expected; p != packet_num; p = (p + 1) % 256
+int s = start; s != end; s = (s + 1) % 768
+
+************************************************************************************************************
+
+IMUReceiver: global_sample_index
+EventDetector: last_processed_idx
+
+************************************************************************************************************
+
+reception_loop -> generate_filename -> fopen_compat -> read_byte  (50ms) -> fwrite & parse_packet [(previous and last pkt num) & (build sample & last_valid_sample)]
+                                                    -> Read bytes (20ms)             -> Global Counter [sync and lost count]
+                                                                                     -> queue (until calibration done)
+
+IMUReceiver
+reception_loop -> parse_packet     -> process_queue         -> processing_loop
+                  - packet_num        - global_sample_index
+                  - sample_num
+                  - IMUSample buf
+                  - global_sample_index
+************************************************************************************************************
+IMUReceiver                                   EventDetector 
+processing_loop                            -> try_calibrate                -> process_sample
+- process_queue                               - IMUSample buffers.valid       - pos (uint8)
+- global_sample_index = batch = sample_idx                                    - sample_idx
+                                                -> calculate_rotation_matrix                     
+                                                   - rotation_matrix[3][3]                        
+                                                                                -> prepross_ufrm   
+                                                                                   - pos
+                                                                                   - last_processed_idx
+                                                                                   - ProcessedSample Vector   
+                                                                                                            
+                                                                              - INTERPOLACION
+                                                                                                          
+                                                                                -> detect_on_sample 
+                                                                                   - pos
+                                                                                   - sample_idx
+                                                                                                          
+                                                                              - last_processed_idx
+
+EventDetector
+detect_on_sample
+
+************************************************************************************************************ 
+const int SEC_EJ[2] = {1, -1};
+const int MIN_SEG_LEN = 35;
+const int MAX_SEG_LEN = 130;
+const float MIN_AREA = 400.0f;
+const float MAX_AREA = 4000.0f;
+const int MIN_EXERCISE_LEN = 100;
+const int MAX_EXERCISE_LEN = 400;
+const float THRESHOLD = 5.0f;

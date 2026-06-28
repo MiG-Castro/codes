@@ -1,0 +1,61 @@
+IMUSample -> Muestras crudas
+IMUSampleUDP -> Para enviar por Socket UDP [id + sample_num + "IMUSample"]
+ProcessedSampleUDP -> sample_num (índice global?) float gyr acc
+PacketTracker -> last_packet_num, first_packet
+
+---------------------------------------------------------------------------------------------------------------------
+class EventDetector
+private: 
+ const int SEC_EJ[2] = {1, -1}; (Secuencia buscada de segmentos)
+ ProcessedSample float gyr + acc + bool valid
+ last_processed_idx ------------------------------------------------------------
+
+try_calibrate(IMUSample buffers): 
+Obtiene y promedia LAS PRIMERAS 60 muestras validas del acc. Pasa a "calculate_rotation_matrix", cambia "calibrated = true;"
+
+process_sample(IMUSample buffers[BUFFER_SIZE], uint32_t sample_idx):
+1. obtiene el índice real del buffer (pos = sample_idx % BUFFER_SIZE)
+2. Llama a prepross_ufrm: 2.1 RawData->Units (U) 2.2 Filter the signal (F) 2.3 Apply rotation matrix (RM)
+3. Detecta gaps (perdidas); usa last_processed_idx y sample_idx.
+   Si hay perdidas -> Rellenar con interpolacion lineal.
+   Nota: No hay limite de las muestras que se pueden rellenar -> CORREGIR DESPUES
+4. LLama a automatic_seg(pos, sample_idx)
+5. last_processed_idx = sample_idx;
+
+// Calcula la matriz de rotación para alinear "Y" con gravedad
+// Pendiente: Contemplar caso de vectores paralelos "v_ini_norm = 0" y vectores paralelos pero opuestos!
+calculate_rotation_matrix
+
+prepross_ufrm
+usa last_processed_idx y first_sample
+
+automatic_seg(int pos, int global_counter)
+usa global_counter
+llama a get_attributes(start_pos, pos, tl);
+
+get_attributes(int start_pos, int end_pos, int l)
+
+----------------------------------------------------------------------------------------------------------------
+
+class IMUReceiver
+YA CUENTA CON RASTREADORES!!!
+
+initialize()
+- Envia la secuencia de comandos
+
+start()
+- inicializa los hilos
+
+void stop()
+- envia secuencia de comandos para "stop" y envia señal para detener hilos
+
+generate_filename
+- Toma la hora y la convierte a string
+
+reception_loop()
+- Crea el archivo binario
+- Lee el serial y forma los pkt's -> Envia los paquetes encontrados a parse_packet()
+
+rx_thread -> reception_loop
+udp_thread -> udp_loop
+process_thread -> processing_loop

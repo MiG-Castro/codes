@@ -1,0 +1,19 @@
+Este demo es con la finalidad de mostrar en eventos de divulgacion.
+Captura la señal emitida por un sensor tag y se calcula la energia
+para llegado a un umbral capturar una foto.
+
+Detalles de configuracion:
+1- Ajustar el puerto COM del sensor en la PC (administrador de dispositivos -> Puertos COM y LPT -> UART)
+	line 21---- ser = serial.Serial('COM4', baudrate=115200, timeout=1)
+
+2- Ajustar la camara que se va a usar para el demo, en caso de estar usando la camara de la PC dejar por defecto el 0, si se tiene una camara externa y es unica tambien dejar 0 en caso de tener dos y querer usar la externa cambiar 0 a 1 en la linea 201.
+	line 201--- cap = cv.VideoCapture(0)
+
+
+
+								Demo propiedad de ARTS, UFM, CICESE
+								Desarrolladores:
+								-Carlos DAvid Nimo Trujillo
+								-Eduardo Garcia Loya
+								-Alfredo Ramirez Velazco
+	
