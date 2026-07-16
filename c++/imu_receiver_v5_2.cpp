@@ -398,7 +398,7 @@ private:
     
     // logica Segmentador automatico
     void automatic_seg(uint32_t idx, uint32_t no_sample, uint8_t p) {
-        float value = processed_buffer[p][idx].gyro[1];
+        float value = processed_buffer[p][idx].gyro[2];
         bool cruce_detectado = false;
 
         // Are we in the THRESHOLD?
@@ -438,6 +438,8 @@ private:
                 seg_actual.len = seg_actual.end - seg_actual.start + 1;
                 seg_actual.sign = (seg_actual.area > 0) ? 1 : -1;
                 float a = fabs(seg_actual.area);
+
+                // printf("P%d-%d l:%d\n", seg_actual.start, seg_actual.end, seg_actual.len);
                 
                 // Check if is a valid segment
                 bool v = true;
@@ -450,9 +452,11 @@ private:
                     if (seg_previo.area != 0 && // Si ya tenemos un segmento previo
                         seg_previo.sign == SEC_EJ[0] && // Y cumplimos la secuencia
                         seg_actual.sign == SEC_EJ[1]) {
-                        
+                            
                             // VALIDACION FINAL!! - Calculate the total len
                             int tl = seg_actual.end - seg_previo.start + 1;
+                            // printf("P[%d-%d l:%d] -> ", seg_previo.start, seg_actual.end, tl);
+                            // printf("Possible Exercise -> ");
                             // If the total len is ok
                             if (tl >= MIN_EXERCISE_LEN && tl <= MAX_EXERCISE_LEN) {
                                 uint32_t start_idx = seg_previo.start % BUFFER_SIZE;

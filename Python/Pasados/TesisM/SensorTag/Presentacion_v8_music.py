@@ -12,7 +12,7 @@ import random
 # 3 Muestras por paquete
 
 # CONFIGURACION BASICA
-port = 'COM11'           # Serial Port - SensorTag-0 = Sumidero/Receptor
+port = 'COM7'           # Serial Port - SensorTag-0 = Sumidero/Receptor
 vol_minimo = 5         # Volumen minimo de reproduccion
 lengthVector = 100      # Numero de muestras a graficar, 1 muestra = 15.625 ms
 actualizacion_ms = 80   # TIempo de actualizacion de grafica

@@ -65,7 +65,7 @@ def getData():
     global S2_xx, S2_min, S2_Loss, lengthVector, Total_E, S2_pk, LossPkt, ultimo, sensor, C
 
     # Configuracion y apertura del puerto serial
-    ser = serial.Serial('COM15', baudrate=115200, timeout=1)
+    ser = serial.Serial('COM7', baudrate=115200, timeout=1)
     ser.setDTR(False)
     time.sleep(1)
     ser.flushInput()
