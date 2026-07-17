@@ -398,7 +398,7 @@ private:
     
     // logica Segmentador automatico
     void automatic_seg(uint32_t idx, uint32_t no_sample, uint8_t p) {
-        float value = processed_buffer[p][idx].gyro[2];
+        float value = processed_buffer[p][idx].gyro[1];
         bool cruce_detectado = false;
 
         // Are we in the THRESHOLD?
