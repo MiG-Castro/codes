@@ -132,6 +132,7 @@ func _physics_process(delta):
 				x = (buffer.get_16() / 16384.0) * q_mod[0]
 				y = (buffer.get_16() / 16384.0) * q_mod[1]
 				z = (buffer.get_16() / 16384.0) * q_mod[2]
+				var raw_quat = Quaternion(x, y, z, w) * Quaternion(0,0,0.7071,0.7071)
 				
 				#w0 = buffer.get_16()
 				#x0 = buffer.get_16()
@@ -149,7 +150,7 @@ func _physics_process(delta):
 					vacio = true
 				
 				if not vacio:
-					rot_quat_0 = Quaternion(x, y, z, w).normalized()
+					rot_quat_0 = Quaternion(x, y, z, w).normalized() 
 					
 					if sensor_source == 0:
 						# hombro
@@ -162,7 +163,8 @@ func _physics_process(delta):
 						# Codo
 						hueso = id_1
 						rot_quat_1 = skel.get_bone_pose_rotation(id_0)
-						rot_quat_2 = rot_quat_1.inverse() * rot_quat_0 * QInv_1
+						rot_quat_0 = rot_quat_0 * QInv_1
+						rot_quat_2 = rot_quat_0 * rot_quat_1.inverse() 
 						
 					if  sensor_source == 2:
 						# Muñeca
