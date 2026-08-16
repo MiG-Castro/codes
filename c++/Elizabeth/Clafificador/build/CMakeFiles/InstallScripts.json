@@ -1,9 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"C:/Users/MACP_/Documents/Codigos/c++/Elizabeth/Clafificador/build/cmake_install.cmake",
-		"C:/Users/MACP_/Documents/Codigos/c++/Elizabeth/Clafificador/build/_deps/glfw-build/cmake_install.cmake",
-		"C:/Users/MACP_/Documents/Codigos/c++/Elizabeth/Clafificador/build/_deps/glfw-build/src/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

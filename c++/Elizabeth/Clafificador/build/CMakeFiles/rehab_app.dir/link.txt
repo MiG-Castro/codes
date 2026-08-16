@@ -1,3 +1,0 @@
-C:\msys64\mingw64\bin\cmake.exe -E rm -f CMakeFiles\rehab_app.dir/objects.a
-C:\msys64\usr\bin\ar.exe qc CMakeFiles\rehab_app.dir/objects.a @CMakeFiles\rehab_app.dir\objects1.rsp
-C:\msys64\mingw64\bin\c++.exe -Wl,--whole-archive CMakeFiles\rehab_app.dir/objects.a -Wl,--no-whole-archive -o rehab_app.exe -Wl,--out-implib,librehab_app.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\rehab_app.dir\linkLibs.rsp
