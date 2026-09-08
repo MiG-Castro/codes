@@ -1,13 +1,13 @@
-import mysql.connector
+#import mysql.connector
 import matplotlib.pyplot as plt
 from matplotlib.widgets import TextBox, Button, CheckButtons
 import numpy as np
 from numpy.linalg import norm
-import mysql.connector
+#import mysql.connector
 
 Nom_BD = 'nuevo_amanecer'
 tabla = "nuevo_ifer"
-ejercicio = "08-04-2022_07-50-42_IAAB_s2.txt"
+ejercicio = "08-04-2022_07-50-42_IAAB_s2.txt"#"08-04-2022_07-50-42_IAAB_s2.txt"
 paciente = [24, "8a 0m"]
 Extremidad = "I"
 ajuste = 0
@@ -20,7 +20,7 @@ if len(ind_precargados) > 0:
         ind_precargados[k] = [ind_precargados[k][0] + ajuste, ind_precargados[k][1] + ajuste]
 
 # CONEXION A BASE DE DATOS
-cnn = mysql.connector.connect(host='localhost', user='root', password='root', port='3306', database=Nom_BD)
+# cnn = mysql.connector.connect(host='localhost', user='root', password='root', port='3306', database=Nom_BD)
 
 # Declaracion y configutacion de Graficas
 fig = plt.figure(figsize=(12, 6))
@@ -81,7 +81,7 @@ def get_data(p_e: bool):
     LossPkt = [0, 0, 0, 0]
     S_Loss = 0
 
-    f = open(ejercicio, "r")
+    f = open("08-04-2022_07-50-42_IAAB_s2.txt", "r")
 
     while True:
         try:
@@ -213,6 +213,8 @@ def animate():
         S_G.set_title(ejercicio + "MR")
         limit = matriz_rot
         print("MR: ", S_xx[limit[0]], S_xx[limit[1]], "\n")
+        print("V", S_ax[limit[0]], S_ay[limit[0]], S_az[limit[0]])
+        print("V", S_ax[limit[1]], S_ay[limit[1]], S_az[limit[1]])
         mr = matriz_rotacion(S_ax[limit[0]:limit[1]], S_ay[limit[0]:limit[1]], S_az[limit[0]:limit[1]])
 
         # Rotacion Acelerometro
@@ -310,6 +312,7 @@ def app_mr(i):
 
 def matriz_rotacion(ax, ay, az):
     v_ini = np.array([np.mean(ax), np.mean(ay), np.mean(az)])
+    print(v_ini)
     v_fin = np.array([0, 1, 0])
 
     A = np.cross(v_ini, v_fin)
