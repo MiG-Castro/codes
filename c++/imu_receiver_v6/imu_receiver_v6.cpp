@@ -579,8 +579,8 @@ private:
     std::string port_name;
 
 public:
-    // Apertura y configuracion de serial
-    SerialPort(const std::string& port, int baudrate = 230400) : hSerial(INVALID_HANDLE_VALUE), port_name(port) {
+    // Apertura y configuracion de serial 230400
+    SerialPort(const std::string& port, int baudrate = 1000000) : hSerial(INVALID_HANDLE_VALUE), port_name(port) {
         std::string full_port = "\\\\.\\" + port;
         hSerial = CreateFileA(full_port.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
         if (hSerial == INVALID_HANDLE_VALUE) {
@@ -715,7 +715,7 @@ private:
     std::chrono::steady_clock::time_point rx_time;
 
 public:
-    IMUReceiver(const std::string& port, bool save_bin = false, int baudrate = 230400):
+    IMUReceiver(const std::string& port, bool save_bin = false, int baudrate = 1000000):
         serial(port, baudrate),
         running(false),
         bin_file(nullptr),
@@ -795,7 +795,7 @@ private:
 
     // Creat bin file and pkt's reconstruction
     void reception_loop() {
-        std::cout << "[RX Thread] ON " << std::endl;
+        // std::cout << "[RX Thread] ON\n";
         if (save_to_bin) {
             bin_filename = generate_filename();
             bin_file = fopen_compat(bin_filename.c_str(), "wb");
@@ -803,7 +803,7 @@ private:
             if (!bin_file) {
                 std::cerr << "[RX Thread] Create/Open file error " << bin_filename << std::endl;
                 return;
-            } else std::cout << "[RX Thread] File open: " << bin_filename << std::endl;
+            } else std::cout << "[RX Thread] File open: " << bin_filename << "\n";
         }
         
         // Búfer local para leer bloques
@@ -856,7 +856,7 @@ private:
         }
 
         if (save_to_bin && bin_file) fclose(bin_file);
-        std::cout << "[RX Thread] Closed" << std::endl;
+        // std::cout << "[RX Thread] Closed\n";
     }
 
     // Detect gaps and save data in the raw struct -> send imu_data to pre-process
@@ -924,7 +924,7 @@ private:
 
     // Preprocess data (units, rotation matrix, filter ...)
     void processing_loop() {
-        std::cout << "[Process Thread] ON" << std::endl;
+        // std::cout << "[Process Thread] ON\n";
         while (running) {
             std::vector<rx_pkt> batch;
             {
@@ -957,11 +957,11 @@ private:
                 ia_cv.notify_one();
             }
         }
-        std::cout << "[Process Thread] Closed" << std::endl;
+        // std::cout << "[Process Thread] Closed\n";
     }
 
     void ia_loop() {
-        std::cout << "[IA Thread] ON - Automatic Segmentator & Neural Network" << std::endl;
+        // std::cout << "[IA Thread] ON - Automatic Segmentator & Neural Network\n";
         while (running) {
             std::vector<rx_pkt> batch;
             bool run_ml = false;
@@ -971,7 +971,8 @@ private:
                 // Si hay un ejercicio "pendiente"
                 if (detector.has_pending_exercise()) {
                     // Si ya tenemos todas las muestras o se llego al tiempo limite de espera -> activar clasificacion
-                    if (detector.all_samples_ready() || detector.check_timeout()) run_ml = true;
+                    if (detector.check_timeout()) run_ml = true;
+                    if (detector.all_samples_ready()) run_ml = true;
                     // Si aun queda tiempo, esperamos
                     else ia_cv.wait_until(lock, detector.get_timeout(), [this] { return !ia_queue.empty() || !running; });
                 
@@ -997,7 +998,7 @@ private:
                 detector.automatic_seg(idx, pkt.no_sample, pkt.p);
             }
         }
-        std::cout << "[IA Thread] Closed" << std::endl;
+        // std::cout << "[IA Thread] Closed\n";
     }
 
     // void ia_loop() {
@@ -1085,6 +1086,10 @@ private:
 // MAIN
 // ============================================================================
 int main(int argc, char** argv) {
+    bool timer_resolution_ok = false;
+    if (timeBeginPeriod(1) != TIMERR_NOERROR) std::cerr << "Error: timeBeginPeriod(1).\n";
+    else timer_resolution_ok = true;
+
     std::string port = "COM7";
     bool save_bin = false;
 
@@ -1108,10 +1113,11 @@ int main(int argc, char** argv) {
     }
 
     receiver.start();
-    std::cout << "\n=== System Running ===" << std::endl;
-    std::cout << "Press ENTER to stop and close..." << std::endl;
+    std::cout << "Press ENTER to stop and close...\n" << std::endl;
     std::cin.get();
     receiver.stop();
     std::cout << "\nSystem closed." << std::endl;
+
+    if (timer_resolution_ok) timeEndPeriod(1);
     return 0;
 }
